@@ -1,0 +1,400 @@
+//
+//  MyBarcodeView.m
+//  Luxury-Source
+//
+//  Created by  Nick on 2018/2/28.
+//  Copyright © 2018年 admin. All rights reserved.
+//
+
+#import "MyBarcodeView.h"
+#import "ZXingObjC.h"
+typedef enum
+{
+    EAN8,
+    EAN13,
+    UPCA,
+    ITF,
+    CODE39,
+    CODE128,
+    QRCode,
+    PDF417
+    
+}
+EnumModelType;
+
+
+
+@implementation MyBarcodeView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+        
+        _isShowLabel = YES;
+        // 注意：该处不要给子控件设置frame与数据，可以在这里初始化子控件的属性
+        UIImageView *iconImageView = [[UIImageView alloc] init];
+        self.barcodeImageView = iconImageView;
+        [self addSubview:iconImageView];
+        
+        UILabel *nameLabel = [[UILabel alloc] init];
+        // 设置子控件的属性
+        nameLabel.textAlignment = NSTextAlignmentCenter;
+        nameLabel.font = [UIFont systemFontOfSize:16];
+        self.barcodeLabel = nameLabel;
+        [self addSubview:nameLabel];
+    }
+    return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    CGFloat ImageViewX = 0;
+    CGFloat ImageViewY = 0;
+    CGFloat ImageViewW = self.bounds.size.width;
+    CGFloat ImageViewH = self.bounds.size.height-20;
+    self.barcodeImageView.frame = CGRectMake(ImageViewX, ImageViewY, ImageViewW, ImageViewH);
+    
+    CGFloat LabelX = 0;
+    CGFloat LabelY = ImageViewH;
+    CGFloat LabelW = ImageViewW;
+    CGFloat LabelH = 20;
+    self.barcodeLabel.frame = CGRectMake(LabelX, LabelY, LabelW, LabelH);
+}
+
+-(void)toRetMyViewUI
+{
+    
+    if (_isShowLabel) {
+        
+        CGFloat ImageViewX = 0;
+        CGFloat ImageViewY = 0;
+        CGFloat ImageViewW = self.bounds.size.width;
+        CGFloat ImageViewH = self.bounds.size.height-20;
+        self.barcodeImageView.frame = CGRectMake(ImageViewX, ImageViewY, ImageViewW, ImageViewH);
+        
+        CGFloat LabelX = 0;
+        CGFloat LabelY = ImageViewH;
+        CGFloat LabelW = ImageViewW;
+        CGFloat LabelH = 20;
+        self.barcodeLabel.hidden = NO;
+        self.barcodeLabel.frame = CGRectMake(LabelX, LabelY, LabelW, LabelH);
+    }
+    else
+    {
+        
+        CGFloat ImageViewX = 0;
+        CGFloat ImageViewY = 0;
+        CGFloat ImageViewW = self.bounds.size.width;
+        CGFloat ImageViewH = self.bounds.size.height;
+        self.barcodeImageView.frame = CGRectMake(ImageViewX, ImageViewY, ImageViewW, ImageViewH);
+        
+        CGFloat LabelX = 0;
+        CGFloat LabelY = ImageViewH;
+        CGFloat LabelW = ImageViewW;
+        CGFloat LabelH = 0;
+        self.barcodeLabel.hidden = YES;
+        self.barcodeLabel.frame = CGRectMake(LabelX, LabelY, LabelW, LabelH);
+   
+    }
+    
+}
+
+-(void)setMyBarcodeViewWithImage:(UIImage *)barcodeImage andTittle:(NSString *)barcodeTittle
+{
+    self.barcodeImageView.image = barcodeImage;
+    self.barcodeLabel.text = barcodeTittle;
+    _Content = barcodeTittle;
+    
+    
+}
+
+-(void)toSetMyBarcodeViewWith:(NSInteger)type andTittle:(NSString *)content
+{
+    
+    _Content = content;
+    _CodeType = type;
+    
+    switch (type) {
+        case EAN8:
+        {
+//            if (content.length !=8) {
+//                
+//                if (content.length < 8) {
+//                    
+//                    do {
+//                        content = [content stringByAppendingString:@"0"];
+//                        
+//                    } while (content.length < 8);
+//                    
+//                    
+//                }
+//                else
+//                {
+//                    
+//                    content = [content substringToIndex:8];
+//                    
+//                }
+//                
+//            }
+            
+            NSError *error = nil;
+
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatEan8
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result)
+            {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                UIImage *imag=[UIImage imageWithCGImage:image];
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            }
+            else
+            {
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+            }
+            
+        }
+            break;
+        case EAN13:
+        {
+            if (content.length !=13) {
+                
+                if (content.length < 13) {
+                    
+                    do {
+                        content = [content stringByAppendingString:@"0"];
+                        
+                    } while (content.length < 13);
+                    
+                }
+                else
+                {
+                    content = [content substringToIndex:13];
+                    
+                }
+                
+            }
+            
+            NSError *error = nil;
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatEan13
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result) {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                
+                UIImage *imag=[UIImage imageWithCGImage:image];
+                
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            } else {
+                
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+
+            }
+            
+        }
+            break;
+        case UPCA:
+        {
+            
+            NSError *error = nil;
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatUPCA
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result) {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                
+                UIImage *imag=[UIImage imageWithCGImage:image];
+                
+                MyBarcodeView *barcodeView = [[MyBarcodeView alloc]init];
+                
+                barcodeView.frame = CGRectMake(10, 100, 200, 90);
+                barcodeView.CodeType = type;
+                [barcodeView setMyBarcodeViewWithImage:imag andTittle:content];
+
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                
+                
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            } else {
+                
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+                
+            }
+            
+            
+        }
+            break;
+        case ITF:
+        {
+            NSError *error = nil;
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatITF
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result) {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                
+                UIImage *imag=[UIImage imageWithCGImage:image];
+                
+                MyBarcodeView *barcodeView = [[MyBarcodeView alloc]init];
+                
+                barcodeView.frame = CGRectMake(10, 100, 200, 90);
+                barcodeView.CodeType = type;
+                [barcodeView setMyBarcodeViewWithImage:imag andTittle:content];
+                
+                
+                
+                
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            } else {
+                
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+                
+            }
+        }
+            break;
+            
+        case CODE39:
+        {
+            NSError *error = nil;
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatCode39
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result) {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                
+                UIImage *imag=[UIImage imageWithCGImage:image];
+                
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                
+                
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            } else {
+                
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+                
+            }
+        }
+            break;
+        case CODE128:
+        {
+            
+            NSError *error = nil;
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatCode128
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result) {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                
+                UIImage *imag=[UIImage imageWithCGImage:image];
+                
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                
+                
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            } else {
+                
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+                
+            }
+        }
+            break;
+
+        case PDF417:
+        {
+            
+            NSError *error = nil;
+            ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
+            ZXBitMatrix* result = [writer encode:content
+                                          format:kBarcodeFormatPDF417
+                                           width:200
+                                          height:70
+                                           error:&error];
+            if (result) {
+                CGImageRef image = [[ZXImage imageWithMatrix:result] cgimage ];
+                NSLog(@"%@",image);
+                
+                UIImage *imag=[UIImage imageWithCGImage:image];
+
+                self.barcodeImageView.image = imag;
+                self.barcodeLabel.text = content;
+                _Content = content;
+                
+                
+                
+                
+                // This CGImageRef image can be placed in a UIImage, NSImage, or written to a file.
+            } else {
+                
+                NSString *errorMessage = [error localizedDescription];
+                NSLog(@"Error = %@",errorMessage);
+                
+            }
+            
+        }
+            break;
+        default:
+            
+            
+            break;
+    }
+    
+}
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+@end

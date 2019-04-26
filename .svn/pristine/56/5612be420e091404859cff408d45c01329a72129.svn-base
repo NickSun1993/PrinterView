@@ -1,0 +1,143 @@
+//
+//  QRCodeViewController.m
+//  Gprinter
+//
+//  Created by 孙锟 on 2018/3/1.
+//  Copyright © 2018年 Gprinter. All rights reserved.
+//
+
+#import "QRCodeViewController.h"
+#import "QRCodeGenerator.h"
+#import "MyBarcodeView.h"
+typedef enum
+{
+    
+    EAN8,
+    EAN13,
+    UPCA,
+    ITF,
+    CODE39,
+    CODE128,
+    QRCode,
+    PDF417
+    
+}
+EnumModelType;
+
+@interface QRCodeViewController ()
+@property (weak, nonatomic) IBOutlet UITextField *textField;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttomLayout;
+@property (weak, nonatomic) IBOutlet UIButton *selectButton;
+@end
+
+@implementation QRCodeViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    UITapGestureRecognizer *returnTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(myRerurnAction)];
+    
+    self.navigationItem.title = @"QRCode";
+    
+    [self.view addGestureRecognizer:returnTap];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+-(void)myRerurnAction
+{
+ 
+    [self.view endEditing:YES];
+    
+}
+#pragma mark - KeyBoard
+- (void)keyboardWillShow:(NSNotification *)sender
+{
+    //获取键盘高度
+    CGRect Keyboardrect = [[sender userInfo][@"UIKeyboardFrameEndUserInfoKey"] CGRectValue];
+    
+    [UIView animateWithDuration:0.35 animations:^{
+    
+//      self.view.frame =CGRectMake(0, - Keyboardrect.size.height+75, WIDTH, HEIGHT);
+    
+        self.buttomLayout.constant = Keyboardrect.size.height;
+    
+    }];
+}
+
+- (void)keyboardWillHidden:(id)sender
+{
+    // NSLog(@"键盘即将掉下");
+    
+    [UIView animateWithDuration:0.35 animations:^{
+        
+        //        self.view.frame = CGRectMake(0, 0, WIDTH, HEIGHT);
+        
+        if (Device_Is_iPhoneX) {
+            
+            self.buttomLayout.constant = 34;
+        }
+        else
+        {
+            self.buttomLayout.constant = 0;
+            
+        }
+    
+        
+    }];
+}
+- (IBAction)myConfirmAction:(id)sender
+{
+    if (_textField.text.length)
+    {
+        
+        NSMutableDictionary *newDic = [[NSMutableDictionary alloc]init];
+        
+        [newDic setValue:@(QRCode) forKey:@"Type"];
+        
+        [newDic setValue:_textField.text forKey:@"Content"];
+        
+        if (_cb) {
+            
+            _cb(newDic);
+        }
+    
+        [self.navigationController popViewControllerAnimated:YES];
+
+    }
+    else
+    {
+    
+        NSLog(@"No data");
+    
+    }
+    
+}
+
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+    
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+ 
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+
+*/
+
+@end

@@ -1,0 +1,61 @@
+//
+//  PrefixHeader.pch
+//  Gprinter
+//
+//  Created by 孙锟 on 2018/1/21.
+//  Copyright © 2018年 Gprinter. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#ifdef __OBJC__
+
+#import <Foundation/Foundation.h>
+
+#import "SettingsSetObject.h"
+
+#import "AlertCenter.h"
+
+#import "PrinterToolsObj.h"
+
+#import "UIImage+Bitmap.h"
+
+#endif
+
+#define WIDTH [UIScreen mainScreen].bounds.size.width
+
+#define HEIGHT [UIScreen mainScreen].bounds.size.height
+
+//设备是否是IPAD
+#define DEVICEISIPAD [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad
+
+//系统版本号
+#define SYSTEMVERSION  [UIDevice currentDevice].systemVersion
+
+//==========================
+#define NAVIGATIONBACKBUTTON UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];self.navigationItem.backBarButtonItem = item;self.navigationController.navigationBar.tintColor = [UIColor blackColor]
+
+//Userdefault
+#define USERDEFAULT [NSUserDefaults standardUserDefaults]
+
+#define ISLOGIN [[NSUserDefaults standardUserDefaults] boolForKey: @"IsLogin"]
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#define Device_Is_iPhoneX [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bottom > 0.0
+
+#define iPhoneX_Top_Height 88
+
+#define iPhone_Top_Height 64
+
+#define iPhoneX_Buttom_Height 84
+
+#define iPhone_Buttom_Height 50
+
+#define SettingsSETObj [SettingsSetObject sharedInstance]
+
+#define PlistPath @"PlistPath"
+
+
+#endif /* PrefixHeader_pch */

@@ -1,0 +1,61 @@
+//
+//  WWTBlueToothConst.h
+//  WWTBluetoothPrinting
+//
+//  Created by admin on 2018/10/25.
+//  Copyright © 2018年 admin. All rights reserved.
+//
+
+#ifndef WWTBlueToothConst_h
+#define WWTBlueToothConst_h
+
+
+typedef NS_ENUM(NSInteger, WWTOptionStage) {
+    WWTOptionStageConnection,            //蓝牙连接阶段
+    WWTOptionStageSeekServices,          //搜索服务阶段
+    WWTOptionStageSeekCharacteristics,   //搜索特性阶段
+    WWTOptionStageSeekdescriptors,       //搜索描述信息阶段
+};
+
+typedef NS_ENUM(NSInteger,WWTConnectStatus) {
+    BETConnecting,                       //蓝牙正在连接
+    BETDisconnect,                       //蓝牙断开连接
+};
+
+#pragma mark ------------------- 通知的定义 --------------------------
+/* 蓝牙状态改变的通知 */
+#define kCentralManagerStateUpdateNoticiation @"kCentralManagerStateUpdateNoticiation"
+
+/* 蓝牙状态改变的block */
+typedef void(^WWTStateUpdateBlock)(CBCentralManager *central);
+/* 发现一个蓝牙外设的回调 */
+typedef void(^WWTDiscoverPeripheralBlock)(CBCentralManager *central, CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI);
+/* 连接完成的block,失败error就不为nil */
+typedef void(^WWTConnectPeripheralBlock)(CBPeripheral *peripheral, NSError *error);
+/* 搜索到连接上的蓝牙外设的服务block */
+typedef void(^WWTDiscoveredServicesBlock)(CBPeripheral *peripheral, NSArray *services, NSError *error);
+/* 搜索某个服务的子服务 的回调 */
+typedef void(^WWTDiscoveredIncludedServicesBlock)(CBPeripheral *peripheral,CBService *service, NSArray *includedServices, NSError *error);
+/* 搜索到某个服务中的特性的block */
+typedef void(^WWTDiscoverCharacteristicsBlock)(CBPeripheral *peripheral, CBService *service, NSArray *characteristics, NSError *error);
+/* 收到某个特性值更新的回调 */
+typedef void(^WWTNotifyCharacteristicBlock)(CBPeripheral *peripheral,CBCharacteristic *characteristic,NSError *error);
+/* 查找到某个特性的描述 block */
+typedef void(^WWTDiscoverDescriptorsBlock)(CBPeripheral *peripheral,CBCharacteristic *characteristic,NSArray *descriptors, NSError *error);
+/* 统一返回使用的block */
+typedef void(^WWTBLECompletionBlock)(WWTOptionStage stage, CBPeripheral *peripheral,CBService *service, CBCharacteristic *character, NSError *error);
+/* 获取特性值的回调 */
+typedef void(^WWTReadValueForCharacteristicBlock)(CBCharacteristic *characteristic, NSData *value, NSError *error);
+/* 往特性中写值的回调 */
+typedef void (^WWTWriteValueForCharacteristicBlock)(CBCharacteristic * characteristic,NSError * error);
+/* 获取描述值的回调 */
+typedef void (^WWTReadValueForDescriptorBlock)(CBDescriptor * descriptor,NSData *data,NSError * error);
+/* 往描述中写值的回调 */
+typedef void (^WWTWriteValueForDescriptorBlock)(CBDescriptor * descriptor,NSError *error);
+/* 获取外设信号值的回调 */
+typedef void (^WWTGetRSSIBlock) (CBPeripheral *peripheral,NSNumber *RSSI, NSError *error);
+/* 获取蓝牙是否连接*/
+typedef void (^WWTGetConnectionStatusBlock) (WWTConnectStatus BETConnectionStauts);
+
+
+#endif /* WWTBlueToothConst_h */

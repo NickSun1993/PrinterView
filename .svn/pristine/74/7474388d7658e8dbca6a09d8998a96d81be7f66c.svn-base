@@ -1,0 +1,38 @@
+//
+//  GPPrintModule.m
+//  WWTBluetoothPrinting
+//
+//  Created by admin on 2018/10/26.
+//  Copyright © 2018年 admin. All rights reserved.
+//
+
+#import "GPPrintModule.h"
+
+@implementation GPPrintModule
+
++(NSData *)GetPrintDataFromBitmapData:(NSData *)bitmapdata xL:(NSInteger)xl xH:(NSInteger)xh yL:(NSInteger)yl yH:(NSInteger)yh
+{
+    NSMutableData * PrintData = [[NSMutableData alloc]initWithCapacity:0];
+    NSString * AD = @"\r\n";
+    NSString * BITMAP = NSString * BITMAP = [NSString stringWithFormat:@"BITMAP 0,0,%ld,%ld,0,",xl+xh*256/8,yl+yh*256];
+    NSString * SIZE = @"SIZE 40 mm,50 mm";
+    NSString * GAP = @"GAP 1 mm,0";
+    NSString * CLS = @"CLS";
+    NSString * PRINT = @"PRINT 1,1";
+    
+    [PrintData appendData:[SIZE dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[AD dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[GAP dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[AD dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[CLS dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[AD dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[BITMAP dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:picturedata];
+    [PrintData appendData:[AD dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[PRINT dataUsingEncoding:NSUTF8StringEncoding]];
+    [PrintData appendData:[AD dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    return PrintData;
+}
+
+@end

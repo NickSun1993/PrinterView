@@ -1,0 +1,57 @@
+//
+//  myCircleView.m
+//  Gprinter
+//
+//  Created by  Nick on 2018/3/5.
+//  Copyright © 2018年 Gprinter. All rights reserved.
+//
+
+#import "myCircleView.h"
+
+@implementation myCircleView
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+        
+        self.backgroundColor = [UIColor clearColor];
+        
+    }
+    return self;
+}
+
+-(void)drawRect:(CGRect)rect
+{
+    //获取当前的上下文
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    //添加一个圆形路径倒上下文中
+    /**
+     *  context  图形上下文
+     *  x,y 圆心坐标点
+     *  radius 半径
+     *  angle 开始和结束的角度  0度在x轴正方向，角度沿顺时针方向增大
+     *  clockwise 画的方向 0表示顺时针画圆，1表示逆时针画
+     */
+    CGContextAddArc(context, rect.size.width/2, rect.size.height/2, rect.size.width/2-8, 0, M_PI_2*4, 0);
+    
+    [[UIColor blackColor] setStroke];
+    
+    [[UIColor clearColor] setFill];
+    
+    CGContextSetLineWidth(context, _lineWidth);
+    
+    //绘制线条
+    CGContextDrawPath(context, kCGPathFillStroke);
+    
+
+}
+
+@end
